@@ -1,0 +1,1244 @@
+﻿See Also:
+Golden Sun 2: The Lost Age
+https://docs.google.com/document/d/1nsDI-Bx6p65X25CPGdJOk8K-WVsYjYTBEN-i_bR8bdk/edit
+
+
+Golden Sun 3: Dark Dawn
+https://docs.google.com/document/d/1p5OMFJ6wOvMTNfZg2ReOMXjP0e4s9IXNb8R7D01td0A/edit
+
+
+
+
+(Copied from GS2 doc/to be updated)
+08000000
+080000C0 = sleep(frames)
+080000C8 = 02003610 (Reset/clear)
+080000D0 = 02003610 (add if not in list ; args(pointer, priority) & sort ; Return index)
+080000D8 = 02003610 (remove in list ; args(pointer) ; Return index)
+080000E0 = 02003610 (priority Or x0100 (all if arg is 0) ; args(pointer) ; Return index of last match) Unknown purpose.
+080000E8 = 02003610 (priority And xFEFF (all if arg is 0) ; args(pointer) ; Return index of last match) Unknown purpose.
+080000F0 = 02003610 (Execute all processes where (priority And xFF00) is arg ; arg(priority_req)
+080000F8 = RNG ; Random Number Generator ; Return 16-bit random number
+
+
+
+
+
+
+080022EC = Division(numerator,denominator) (Signed?)
+080022F4 = Division(numerator,denominator) (Unsigned?)
+080022FC = Division(numerator,denominator) (Signed. return remainder?)
+08002304 = Division(numerator,denominator) (Unsigned, return remainder?)
+0800231C = 
+08002322 = sin(angle
+
+
+08002F10 = 03007804:Build date
+08002F3C = Return
+08002F40 = get_mft_file(file_num)
+08002F4C = Convert Map Code BL calling from absolute to relative. Args(address, 16-bits)
+08002FB0 = Decompress Map Code
+
+
+0800307C = setInterrupt(type, dma flags, function pointer)
+
+
+080030F8 = sleep(frames)
+
+
+080037D4 = 
+
+
+
+
+08003B70 = Fade-out(frames) (brightness)
+08003BB4 = Fade-in(frames) (brightness)
+08003BF8 = Fade-out(frames) (alpha blend)
+08003C3C = Fade-in(frames) (alpha blend)
+08003C80 = (Blend Type (0=Brightness Decrease, 1=Alpha Blending), 1st target,startBlend,endBlend,frames) ; startBlend may be ignored if invalid, and use previous endBlend (may be current blending) instead
+08003CE0 = Process blend to completion (Calls sleep/frameAdvance function)
+
+
+
+
+08003FA4 = reclaimSpriteSlot(slot, size, pixel graphics pointer (if 0, skip; if -1, 00 out VRAM bytes)) (and claim space)
+
+
+
+080040E8 = 03001A20 (Reset/clear)
+0800412C = copy(des,src,size/number of 32-bits) - not sure where used.
+08004144 = 03001A20 Sort list
+08004198 = 03001A20 get_entry(function)
+080041D8 = 03001A20 add_entry(function, priority) If function is already listed, changes its priority. (Returns entry or number of entries?)
+08004270 = Return
+08004274 = Return
+08004278 = 03001A20 remove_entry(function) Sets priority to 7FFF. Returns entry.
+080042C8 = 03001A20 ?(function) ([5] Or 1) Return last matched entry.
+0800430C = 03001A20 if function is 02****** and if ([6]&1)=0, then ([5] Or 1). Return last matched entry.
+08004358 = 03001A20 set(function,[+6]) Return entry.
+0800439C = 03001A20 Return entry.
+080043E0 = 03001A20 Ram functions set to even # priority ([5])
+08004420 = 03001A20 Execute_functions(priority) ([5])
+(There are 2 GS2-exclusive functions)
+08004458 = rand()
+0800447C = rotated coords(distance, angle, sp) sp has x, z, y. ; Calculates coords to a distance in a defined direction. Facing right is angle 0.
+Equivalent to:
+x += distance * cos(angle)
+y += distance * sin(angle)
+080044D0 = getDirection(y>>3,x) (Might be used to face an object.)
+080045A4 = IntSqrt(n) (returns sqrt{n})
+080045D4 = FastIntSqrtFP1616_RAM(n) (calls FastIntSqrt in RAM (030001d8), and corrects for the fact that
+       the input to this  function is a FP1616 fixed point number, 
+       returns the square root in fp1616 fixed point format)
+080045E8 = get_sprite_palette_bank()
+080045F0 = 03001250 String data: 0123456789ABCDEF (8 characters.)
+08004620 = 03001250 String data: Numeral integer (+/-) (11 chars. Maybe 10 for GS1? *Research)
+08004698 = Map Base fill F000 by size (arg0)
+080046C4 = Map base related…
+08004718 = (Minimum 8)
+0800473C = (Minimum 10)
+08004760 = Map Base BG0 fill all F000 (06002000-06002500)
+0800479C = Load font file, panel border palette, sprite palette, etc.
+08004838 = Load sprite palette
+08004858 = reset_space() 00-fills 03001E50-03001F50 section, and sets free space to 03002000 & 02030000.
+0800488C = get_free_size() Check 03 RAM.
+080048A0 = get_free_size() Check 02 RAM.
+080048B0 = get_free_space(rel_addr,size) Check 03 RAM first, then 02 RAM, if failed, return 0.
+080048F4 = get_free_space(rel_addr,size) Check 02 RAM first, then 03 RAM, if failed, return 0.
+(GS2-exclusive:  08014D40 = fill_free_space(fill_val))
+08004938 = get_free_space(size) Check 03 RAM first, then 02 RAM, if failed, return 0.
+08004970 = get_free_space(size) Check 02 RAM first, then 03 RAM, if failed, return 0.
+Note: Free space limits are at 02030000-02040000 and 03002000-03007800.
+080049A8 = Return
+
+
+080049AC = matrix_stack_init
+080049E8 = matrix_push
+08004A28 = matrix_store
+08004A44 = matrix_load
+08004A5C = matrix_pop
+08004A94 = matrix_cache_init
+08004AB0 = matrix_transform_rotate
+08004BD4 = matrix_transform_rotate_roll
+08004C1C = matrix_transform_rotate_pitch
+08004C6C = matrix_transform_rotate_yaw
+08004CB4 = matrix_transform_translate
+08004CF0 = matrix_transform_scale
+08004D2C = matrix_transform_rotate_translate
+08004E54 = matrix_transform_rotate_translate_scale
+08004FE4 = matrix_lookat_rh
+080051D8 = matrix_cache_lookat_rh
+080051E8 = matrix_transform_lookat_rh
+08005208 = ?
+08005258 = ?
+08005268 = 
+080052F4 = decompress(from,to) - Distance-Length - Data is in 16-bits.
+08005340 = decompress(from_address, to_address) //I think? (& misc?) ; Format 0 and 1.
+08005394 = decompress_image(from_address, to_address)? (Tileset image) ; Format 2.
+080053E8 = decompress(from,to) - Distance-Length 
+^Puts actual decompression routine into RAM, and calls it.
+
+
+0800543C = 
+08005490 = 
+080054E4 = 
+08005534 = 
+
+
+
+
+FROM TLA:
+Save Management
+SRAM (save RAM) = 0x0E000000-0x0E00FFFF
+ -battery files (.sav) are copies of SRAM
+file = in-game slot (0-2)
+savslot = SRAM section (0x0-0xF, 0x10 if invalid.) Corresponds to SRAM address: 0x0E000000 + 0x1000*savslot
+section headers: CAMELOT: 7 bytes; in-game slot: 1 byte (+3 for part 2); checksum: 2 bytes; priority: 2 bytes; unused: 4 bytes
+sav table (60 bytes) = [03001F1C]
+  16 bytes - 1 byte per SRAM section: 01 if header is valid, and has the highest priority for its slot, otherwise 00
+  16 bytes - 1 byte per SRAM section: the in-game slot of the SRAM section
+  32 bytes - 2 bytes per SRAM section: the priority of the SRAM section
+localsave (0x1000 bytes) = [03001F1C] + 0x40
+savepreview (0x40 bytes per in-game-slot) = [03001F1C] + 0x1040
+080056CC = Reads the header of each SRAM section, and sets up sav table.
+08005810 = getRndFreeSlot(file) - checks sav table, returns a random available savslot: grn() % freeslots
+ Returns 0x10 if no slots available, or if it could result in no slots being available. (Always ensure a backup slot?)
+08005868? = save(savslot) - transfer to SRAM with progress bar (if used)
+080058AC = loadSlot(savslot)
+ -Loads one SRAM section (0x1000) to localsave, calls checksum.
+ -Returns difference of (savChecksum() & 0xFFFF) and header checksum. (0=valid file, non-zero=corrupted file.)
+08005904 = GS1-only: 
+08005920 = save(file) - saves the game
+08005A78 = loadFile(file, desAddress) Returns 0 for success, 1 for failure. (Depends on if file is in sav file.)
+08005AC0 = 
+08005AE0 = savChecksum() - returns sum of bytes in localsave (skipping header)
+08005B24 = getSavSlot(file) - returns the savslot of file, or 0xF if file is unused
+08005B64 = 
+08005C08 = compareBytes(pointer1, pointer2, bytecount) - returns the difference of first mismatch, or 0 if no mismatches
+08005C2C = getlowestpriority(savslot)
+08005C68 = getSavePreview() - loads first 0x40 bytes from each in-use-save to savepreview
+ - bytes 0x38-0x3B are replaced with savedata[0x1010:0x1014]
+08005CF8 = 
+08005D10 = 
+08005D = ?, called from #08042F10 (stores r0 value of #08042DC5 somewhere; data/address positioning for next function?)
+
+
+
+
+080063BC = setupOutgoingTransfer(address, size) Return -1 for “busy”, else 0.
+08006408 = setupIncomingTransfer(address, size) Return -1 for “busy”, else 0.
+
+
+08006864 = swi $B
+
+
+
+
+080072E4 = Jump functions (r0-lr)
+
+
+
+
+08009000 = Map/Sprite Mechanics
+
+
+0800A97C = Decompresses sprite’s graphics (Compression Type 0x3, it seems.) - Distance-Length
+0800AA0C = (If based on GS2, might only be called from battle mechanics?)
+0800B074 = 
+0800B168 = 
+0800B388 = 
+0800B684 = 
+0800B6B8 = (slot/index?,dest address,,)
+0800B798 = ?(sprite_index) (GS2’s Func 08022C98’s usage-when graphic sprite data pointer is 0x00000000.)
+0800B7C0 = 
+0800B868 = 
+0800B8AC = 
+0800B93C = 
+0800B9A4 = 
+0800B9F4 = 
+0800BA30 = 
+0800BACC = 
+0800BAF8 = 
+0800BB20 = 
+0800BBC0 = 
+0800BC48 = 
+0800BC70 = 
+0800BDD4 = 
+0800BE20 = 
+0800BE70 = 
+0800BEFC = 
+0800BF34 = 
+0800BFA4 = 
+0800C004 = 
+0800C0C4 = Return
+0800C0C8 = Return
+0800C0CC = 
+0800C0F4 = 
+0800C150 = 
+0800C2D8 = 
+0800C300 = 
+0800C344 = 
+0800C388 = 
+0800C3EC = 
+0800C408 = 
+0800C430 = 
+0800C454 = 
+0800C46C = 
+0800C47C = 
+0800C48C = 
+0800C49C = 
+0800C4AC = 
+
+
+
+
+0800E220 = 00
+0800E24C = 01
+0800E280 = 02,03,04
+0800E2B0 = 05
+0800E2DC = 06
+0800E308 = 07
+0800E334 = 08
+0800E364 = 09
+0800E390 = 0A,0B
+0800E3BC = 0C
+0800E3E8 = 0D
+0800E414 = 0E
+0800E440 = 0F
+0800E46C = 10
+0800E498 = 11
+0800E4C4 = 12
+0800E4F0 = 13
+0800E51C = 14
+0800E548 = 15
+0800E574 = 16
+0800E5A0 = 17
+0800E5CC = 18
+0800E5F8 = 19
+0800E634 = 1A
+0800E670 = 1B
+0800E6AC = 1C
+0800E6E4 = 1D
+0800E720 = 1E
+0800E75C = 1F
+0800E798 = 20
+0800E7D4 = 21
+0800E810 = 22
+0800E850 = 23
+0800E890 = 24
+0800E8D0 = 25
+0800E8FC = 26
+0800E928 = 27
+0800E964 = 28
+0800E9A0 = Data Script 16? - Variable Set. [0] = [1]
+0800E9DC = Data Script 17? - Variable Add. [0] += [1]
+0800EA18 = Data Script 18? - Variable If Equal?
+0800EA54 = 
+0800EA60 = 
+0800EAF8 = 
+0800EBA0 = 
+0800EBEC = Unknown Movement Type - Regular Map normal movement
+0800F2F8 = Unknown Movement Type - World Map normal movement?
+0800F7DC = 
+0800F7F4 = 
+0800F9CC = 
+0800F9F4 = 
+0800FA8C = 
+0800FAC8 = 
+0800FB38 = Loads files for room.
+0800FE9C = 
+0800FEC8 = 
+0800FF54 = 
+08010000 = 
+08010230 = 
+08010424 = 
+08010560 = 
+080105D4 = 
+08010704 = 
+08010788 = 
+080108C4 = 
+080108E4 = 
+080109E8 = 
+08010D48 = 
+08010E14 = World Map (080132CC = World Map File Indexes : Tilesets, etc.) = Might load tileset data when you first load the map?
+08010FF0 = 
+080110E0 = World map - Copies row of tiles to VRAM. (Both layers)
+08011164 = World map - Copies column of tiles to VRAM. (Both layers)
+080111B4 = 
+080113E4 = 
+080114A0 = 
+08011568 = 
+08011590 = 
+0801161C = 
+08011644 = 
+0801173C = 
+0801179C = 
+080118A8 = 
+080118C0 = 
+080118D8 = 
+08011984 = 
+080119A8 = 
+080119CC = 
+08011A84 = 
+08011AE0 = 
+08011AF0 = 
+08011B00 = 
+08011B54 = 
+08011BC8 = 
+08011BE0 = 
+08011BF4 = 
+08011CE0 = Height Map 0 - Flat ground (heightDataPointer+1,x,y)
+08011CEC = Height Map 1 - Left/Right stairs
+08011D10 = Height Map 2 - Up/Down stairs
+08011D34 = Height Map 3 - / (Corner tile)
+08011D60 = Height Map 4 - \ (Corner tile)
+08011D94 = Height Map 5
+08011DDC = Height Map 6
+08011E2C = Height Map 7 - Pillar? (Based on data at 080132FC) (Not an index to Arg 1/Arg2/Arg3, but... (value * (Arg 2 - Arg 1))
+08011E50 = Height Map 8 - Left half of tile's height is Arg 1, right half is Arg 2.
+08011E6C = Height Map 9 - Top half of tile's height is Arg 1, bottom half is Arg 2.
+08011E88 = Height Map A - Stairs (Height 1 to 2 = left half ; Height 2 to 3 = right half)
+08011ED0 = Height Map B - Stairs (Height 1 to 2 = top half ; Height 2 to 3 = bottom half)
+08011F14 = Height Map C - Based on data at 080133FC [Y<<4 + X]
+08011F28 = Height Map D - Based on data at 080133FC [Y<<4 - X + 0xF]
+08011F3C = Height Map E - Flat ground (Same as HM0)
+ GS2: Bottom half = Arg 3 ; Top left corner = Arg 1 ; Top right corner = Arg 2
+08011F48 = Height Map F - Flat ground (Same as HM0)
+ GS2: Top half = Arg 1 ; Bottom left corner = Arg 2 ; Bottom right corner = Arg 3
+08011F54 = Get height function(layer,x,y)
+08011FD8 = Height related. Get height type(layer,x,y)
+08012038 = Tilemap related. Get event id(layer,x,y)
+08012078 = set event id(layer,x,y,value)
+080120B4 = getSpritePrio(x pix, y pix) //pixel coord turned into tile coord. pixel portion unused. *GS1-exclusive?
+080120DC = Player's check height function? (npc ram address, coords address)
+ Probably not player specific, but just a check for if movement can take place.
+ Returns:
+ -1 = Destination too low.
+ 0 = Do move.
+ 1 = Destination too high.
+ 2 = Event FF / No movement
+0801219C = ? (Probably height related?) (coords address) (For wall climbing ; Does y-z in lookup.)
+Returns:
+ -1 = Event FF / No movement.
+ 0 = Do move.
+08012204 = (coords address) Might return terrain type for pixel. (Used for determining battles? And maybe collision?)
+080122AC = (unused, coords address) Returns -1 for solid, 0 for not solid. (Normal walking and sand(GS2), collision detection.)
+080122C8 = Get World Map Battle Background
+08012330 = 
+08012350 = 
+08012388 = 
+080123F4 = May make table for tilting data. (?,pointer to [03000030]+C/data on current position,pointer to where to write data)
+08012518 = Sprite Viewer?
+08012AF8 = 
+08012B2C = 
+08012D20 = 
+08012D48 = 
+08012D70 = 
+08012DE8 = 
+08012E28 = 
+08012F20 = tables
+
+
+0801404C = Free space
+
+
+
+
+08015000 = 
+
+
+08015120 = 
+080151C4 = 
+
+
+08015438 = text_getNextChar(sp) ; navigates through last decompressed char's tree for the next char. ; Returns next char.
+
+
+080162D4 = create_panel(x, y, width, height)
+08016418 = close_panel(pnl_pntr, skipClosingAnimation)
+08016478 = clear_panel(pnl_pntr)
+08016498 = draw_panel(pnl_pntr)
+
+
+08018038 = decompress_text(text_index) ; stores output at [$03001E8C] + 0xEB0 (changes based on location)
+  Caves/Towns: $0203396C
+  Overworld:   $02034C54
+  Battle:      $02035228
+
+
+08019D2C = Display Character Portrait(?)
+
+
+0801C34C = Room name (Disappears in seconds, so it is for room entrances.)
+0801C3E8 = “gs2
+0801C428 = “gs2
+0801C458 = “gs2
+-- GS1-exclusive (I think.) --
+0801C468 = Return 1
+0801C46C = 
+0801C49C = Debug-related
+ Isaac: Move
+ Garet: Move
+ Ivan: Move, Mind Read, and Whirlwind
+ Mia: Ply
+ Jenna: Move
+0801C7FC = 
+0801C8A0 = 
+0801C924 = Call 0801C49C
+0801C930 = 
+0801C954 = 
+0801C9BC = Return
+0801C9C0 = Return
+0801C9C4 = Return
+0801C9C8 = 
+-- End of GS1-exclusive (I think.) --
+0801CA1C = (GS2: 0803F9C0?)
+
+
+0801D108 = Settings menu related
+
+
+0801D9D4 = Pause menu related
+0801DB70 = Pause Menu: Main
+ 0801DC9C = Pause Menu closing sound effect 
+0801DD28 = Non-italic font?
+0801E74C = display_large_text_italics(text_index, pnlpntr, x, y)
+0801E940 = display_text_fixed(text_pntr, pnl_pntr, x, y)
+
+
+0801F9B4 = --3-----9 = Save() ; Without Saving dialogue. / Not sure if used. - Saves to current file.
+0801FA3C = --3-----9 = Save(file (0-2)) ; Without Saving dialogue. / Not sure if used.
+0801FAA8 = -23-----9 = LinkArenaSave()?
+0801FB48 = "Okay to save over this file?" and "Your game was saved." function.
+0801FBA8 = 123-5---9 = Copy Menu()
+0801FC84 = 1--4----9 = Erase Menu()
+0801FD34 = 
+0801FD84 = 
+0801FD98 = 
+0801FDA8 = 
+0801FE2C = 
+0801FF14 = 
+0801FF58 = 
+0801FFD8 = 
+08020088 = 
+080200CC = 
+08020150 = 
+08020198 = 
+08020244 = Choose a file menu  - Main (selected file (0-2), Menu Type (Ex:Continue,Save,etc.))
+080207C4 = 1-3-----9 = Save Menu()
+080208E4 = 12------9 = Load Menu(menu type (1=Continue/4=Battle/5=Transfer))
+
+
+
+
+08020BD8 = Name select menu on new game?
+ [sp,0x1C] = letters input thus far
+ 08020D86-08020FB0 = frame loop while waiting for input
+
+
+08028F98 = debug_menu_warp()
+080291E4 = debug_menu_flags()
+
+
+0802A2E4 = Item Icon Table
+0802DE88 = Psynergy Icon Table
+080308A0 = Status Icon Table
+
+
+08077000 = Party Mechanics
+
+
+08077320 = (Init party and load screen 0.)
+08077330 = get_djinn_queue_addr(0), or get_enemy_slot_0x83_addr(1)
+08077348 = get_average_pc_level()
+08077394 = locate_char_data(character_id) as Int32 //Returns pointer to character's RAM data (Party Member or Enemy)
+080773D8 = get_enemy_stats_address(enemy_id)
+080773F4 = copy_bytes?(addr1,addr2,bytes,from/to)
+08077428 = calcStats(pc) //Updates all stats?
+08077C10 = Clears flag x167 (Boosts Encounters) & Checks all items from all PCs actively in party, and sets x167 if one Boosts Encounters.
+08077CB8 = Calculate build date.(What is the point?)
+08077D38 = Party initialization?
+08077F40 = 0x20=1, Isaac, Garet, Jenna. (Does this update class?)
+08077F70 = 0x20=0, 0x21=0, 0x901=1, Jenna (class?), 0x11B=0, 0x11A=1.
+ 08077F9E = Isaac/Garet: HP/PP replenished, first Machete to equipped Short Sword. (update class?)
+ 08078056 = Isaac: Move and Retreat, Garet: Move, Ivan: Mind Read; Coins += 300.
+0807808C = Max_PC_stats(cure_poison_haunt) (HP/PP)
+08078144 = max_pp() Elements V/Ma;J/Me , Some lighthouse PP Regen flags must be on (x110-x113)
+08078228 = Return
+0807822C = Calculate_HP_PP_percentages(pc) 0-4000
+080782A0 = cur_hp_set(pc_addr,val)
+08078320 = cur_pp_set(pc_addr,val)
+080783A4 = cur_hp_add(pc,val) Return current hp
+080783DC = cur_pp_add(pc,val) Return current pp
+08078414 = get_item_address(item)
+0807842C = is_equipped(pc, item) //Returns 1 if item is equipped.
+0807845C = (pc, item) //Returns 1 for certain item types, and requires a is_equipped check for others.
+08078480 = (item) //Returns a number depending on the item type.
+080784B0 = get_item_amount(pc, item_slot)
+080784D8 = get_empty_item_slot(pc) //Will return xF if none.
+08078500 = is_empty_item_slot_available() //Returns 1 if any PC has an empty item slot.
+08078550 = get_total_of_empty_item_slots()
+08078588 = add_item(pc, item) //Returns item slot, or -1 if item was not added.
+08078618 = add_item(item) //Returns pc, or -1 if item was not added.
+08078664 = get_item(party_member, item) as Int32 //Returns Item Slot # (0-14, -1 if not in stock.)
+08078698 = get_item(item) as Int32 //Returns Party Member (0-7, -1 if not in stock.)
+08078708 = equip_item(pc, item_slot) Returns -1 if already equipped, -2 if another item of the same type is equipped and can't be removed. (x6 (Fan) and xB (?) skips checking another item. / Just equips.)
+080787DC = get_equipped_item_slot(pc, item_type) //Returns the item slot for the equipped item type. -1 if none.
+0807882C = get_equipped_item_address(inventory_address, item type) //Returns 0 if none.
+08078870 = get_equipped_item(inventory_address, item type) //Returns 0 if none.
+080788C4 = remove_item(party_member, item_slot) //Returns -1 for empty slot, 1 for decremented quantity, 2 for removed altogether.
+08078948 = remove_itema(party_member, item_slot) //Returns -1 for empty slot, 1 for decremented quantity, 2 for removed altogether. Artifact check. (Makes the item available as an artifact if it is one.)
+08078980 = can_be_dropped?(pc, item_slot)
+ Return:
+  0 = OK
+ -1 = Empty (item id=0)
+ -3 = Equipped unremovable item (usually for cursed items)
+ -4 = Important item (takes priority over -3)
+ flag x1 for if equipped and cannot be removed, flag x2 for important item. ; Returns x8 if empty slot.
+080789DC = remove_item(item) //Returns 0 //Searches all party members for item and removes/decrements it.
+08078A08 = remove_itema(item) //Returns 0 //Searches all party members for item and removes/decrements it. Artifact check. (Makes the item available as an artifact if it is one.)
+08078A34 = break_item(pc, item_slot) //Returns -1 if empty slot, else 0.
+08078A60 = repair_item(pc, item_slot) //Returns -1 if empty slot, else 0.
+08078A8C = get_item_target(item) //Reads item's ability target.
+08078AA0 = add_artifact(artifact_slot, add_quantity) //Returns quantity of artifacts of this item. (0-99)
+08078AD0 = add_artifact(item, add_quantity) //Returns quantity of artifacts of this item. (0-99)
+08078AF8 = get_item_amount(pc, item) //From specified PC.
+08078B60 = get_item_amount(item) //From all PCs.
+
+
+08078B9C = get_ability_address(ability) //x0000-x3FFF ; < x2DE
+08078BC0 = psy_check(party_member, ability) as Boolean //Returns True if s/he has the ability.
+08078BF0 = psy_refresh(pc) //Sets up psy list for Class, Item, and Native.
+08078E28 = add_ability(party_member, ability) //Returns an ability_slot
+08078ECC = level up check & level up(pc,sp) Return 0 if didn't level up, otherwise sp. (Call 080AFB80.)
+08078ED8 = Get Party Member Base Stats Address(pc)
+08078EE8 = Party Member Names… and etc?
+08079004 = Return
+08079008 = EXP to level(pc, next_level) Returns experience. Returns -1 if class is NPC, or next_level is 100, or pc>7.
+0807905C = level up(pc, sp)
+080792C4 = level up check & level up(pc,sp) Return 0 if didn't level up, otherwise sp.
+080792FC = level_up(pc,target?_level)
+08079338 = read_flag(flag_number) as Boolean
+08079358 = set_flag(flag_number)
+08079374 = clear_flag(flag_number)
+08079390 = toggle_flag(flag_number) as Boolean //Returns 1 if toggled on, else 0 if toggled off.
+080793B8 = read_byte(flag_number) as Byte
+080793C8 = write_byte(flag_number, value)
+080793D8 = increment_byte(flag_number) as Byte //Returns incremented byte. (Increments by 1.)
+080793F8 = decrement_byte(flag_number) as Byte //Returns decremented byte. (Decrements by 1.)
+08079418 = read_4bit(flag_number) as Int32 //Returns 4-bit value.
+08079434 = write_4bit(flag_number)
+08079460 = (Might initialize enemy?)
+080795FC = party_members()
+0807961C = add_party_member(party_member) as Int32 //Returns new number of members in team.
+08079664 = remove_party_member(party_member) as Int32 //Returns new number of members in team.
+080796C4 = copy_party_members(address) as Int32 //Returns number of members in team. Note: address is where to copy them to. (16-bit spaced.)
+08079700 = add_coins(coins) as Int32 //Returns added number. (0 - 999999)
+08079728 = addShoppedCoins(number_to_add) as Int32 //Returns added number. (0 - 999999) Spent coins at shops. (For game ticket offers)
+08079754 = addGameTickets(number_to_add) as Int32 //Returns added number. (0 - 28) Number of Game Tickets bought, caps at 0x1C.
+0807977C = get_summons_total(addr) addr is where to list the summons.
+080797D4 = get_summon_address(summon)
+080797EC = get_class_type_chart_value(first_element?,second_element?)
+080797FC = get_elemental_levels(pc,pc_ram_addr,sp) pc can be 0-7 for PCs, or 8+ for enemies.; Return 0.
+0807987C = get_elemental_level(pc,element)
+080798B4 = get_enemy_elemental_attr(enemy)
+080798E0 = update_elemental_pow_resist(pc_slot, pow_res_ram_addr) Includes base levels and djinn, not sure about item bonuses.
+080799B0 = find_matching_class(pc,pc_ram_addr) //,item) = item not used in GS1, but is in GS2.
+08079AD8 = get_class_address(class)
+08079AE8 = Djinn set/removal calculations(pc) (grabs/updates class ID (abilities too), and links update_elemental_pow_resist)
+08079B24 = toElementalHexPercent(Relative ePower, eHalfEffective) (Converts to hex percentage. (Multiply by 1.28 or 0.64 and add 256. Equivalent to (1 + Relative Power / 200) and (1 + Relative Power / 400), but those have a rounding error.) In parent function mult, with value and shift out 8 bits.) It’s like converting 100 to +50% in hex. (If eHalf, +25%) (150% and 125%)
+08079BC4 = Random Number Generator/RNG //Returns 16-bit (x0000-xFFFF)
+08079BE8 = Return random number x0-x63.
+08079BF8 = calcAttack(attack,targetDef,power,Relative ePower) targetDef could be 100%, 50%, or 0% of value depending on effect. Used by Added Damage & Multiplier
+Return max(0, max(0, ((userAttack - targetDef) / 2) + abilityPower) * (1 + (Int(Relative ePower*256/400)/256)))
+08079C30 = calcCast(abilityPower,Relative ePower,percent) (From left?) elemental pow/resist related *Called from Summon and Effect Only formulas… 
+Return abilityPower * (1 + (Int(Relative ePower*256/200)/256) * hexPercent
+08079C5C = calcHeal(Same as above, but it multiples arg r1 by 2 and subtracts by 200 at beginning.) (From Center?) *Called from Healing formula(s).        
+Return abilityPower * (1 + (Int(ePower*256/100)/256) * hexPercent
+08079C8C = get_elemental_attr(pc)
+08079CBC = get_item_criticals(pc_addr)
+08079D1C = unleash_check(pc) Returns ability to cast. (Unleash if chance succeeds, or attack.)
+08079D7C = Base Ability Effect Success Rates/Chances
+08079E9C = is_vulnerable/weakness(pc_addr, ability_effect)
+08079EF8 = Ability_Effect_Revives(ability_effect) //If effect revives, return 1, else 0.
+08079F10 = Calculate_Ailment_Success(attacker,defender,element,effect,percentMod)
+0807A0CC = get_djinni_address(element, djinn) //element: x0-x3 ; djinni: x0-x13
+0807A0F4 = add_djinni(element,djinni) Checks flags.
+0807A1B4 = add_djinni(pc,element,djinni) Return -1 if more than 9 djinn of element or already have the djinni, return 0 if added. ; Doesn’t check flags.
+0807A1F8 = ?(pc,element,djinni) If don’t have djinni, or if set, return 0.
+0807A2BC = is_djinni_set(pc,element,djinni) Returns 1 if djinni is set, else 0.
+0807A2E4 = set_djinni(pc,element,djinni) Returns 0 if not set.
+0807A350 = standby_djinni(pc,element,djinni) Returns 0 if set.
+0807A3A8 = djinnRecover(pc,element,djinni) Removes djinni from list. Returns 1 if recovering djinni removed, else 0. (Does not alter PC tables.)give
+0807A458 = djinni_recovering(pc,element,djinni) Puts djinni on recovery mode.
+0807A498 = give_djinni(pc_from,element,djinni,pc_to) Could be give, trade, both, or…
+0807A550 = count standby djinn(addr) Returns number of djinn. (0xFF000000 check.) ; If addr isn't 0, also lists them for each element at addr. (*Research where this function is used.)
+0807A5B0 = get_djinni_ability(element, djinn)
+0807A5BC = get_ttl_djinn(element) If element=-1, all elements.
+0807A628 = Add and equip item. (pc,item)
+0807A664 = If [02001078]!=6774, [02001078]=1, Isaac's party items to [0200107A]
+ -Removes items from PCs of Item Type 6 , [+2]=6 , (08079AE8 Class update?)
+ -Saves [02000460], [02000462], [02000438], [0200043A]
+ -(0807A628(pc,short sword)) 0x952=1
+ -Max PC stats & cures poison/haunt
+0807A7A0 = (If give up?)
+
+
+Data
+0807A828 = Party, 00=Venus/Mars, 01=Jupiter/Mercury (Somehow used for maxing out Current PP.)
+0807A830 = Party EXP Growth (EXP to level tables)
+0807B490 = Artifacts
+0807B690 = PC IDs. (0,1,2,3,5,-1)
+0807B6A8 = Item data
+0807EE58 = Ability data (16 bytes per entry)
+  BYTE - Target
+  BYTE - Type of move + Can be used in / outside of battle
+  BYTE - Element
+  BYTE - Ability Effect
+  SHORT - Icon (might be a BYTE joined with a second unused one; have not checked if GS1 uses both bytes for this)
+  BYTE X 2 - ???
+  BYTE - Range
+  BYTE - PP Cost
+  SHORT - Power
+  BYTE - Utility to use
+  BYTE X 3 - ???
+08080EC8 = Enemy Stats/Enemy Data/Enemy Table (84 bytes per entry)
+  BYTE x 14 = 0x20, likely reserved space for their name, but is unused.
+  BYTE - Unused
+  BYTE - Level
+  SHORT - HP
+  SHORT - PP
+  SHORT - Attack
+  SHORT - Defense
+  SHORT - Agility
+  BYTE - Luck
+  BYTE - Turns
+  BYTE - HP Regen
+  BYTE - PP Regen
+  SHORT x 4 = Items
+  BYTE x 4 = Item quantities
+  BYTE x 10 = ???
+  BYTE = Elemental Stats index (They're read from a separate location)
+  BYTE = AI: IQ
+  BYTE = Attack Pattern/Selection
+  BYTE = Each bit of this represents a checkbox beside an attack in the editor, prioritizes item use over ability execution of the enemy is holding something (maybe more)
+  SHORT x 8 = Attacks
+  BYTE x 3 = Ability Effects for Vulnerabilities/Weaknesses (25% greater chance of receiving the ailment. Not all ability effects apply, probably only the ones that do the formula.)
+  BYTE = Unknown (Probably Unused.)
+  SHORT = Coin prize for defeating
+  SHORT = Item prize for defeating
+  SHORT = Chance of receiving item (corresponds to ICC values if you're familiar with them)
+  SHORT = Experience for defeating
+
+
+080844EC = Party Member Base Stats
+08084A8C = Summons list
+08084A9C = Summons (8 bytes per entry)
+08084B1C = Classes
+08088DB8 = Class Type chart
+08088DF8 = PC Elemental data (E. Levels 0-15)
+08088E38 = Enemy Elemental data
+08089258 = Element Scaling during Attack/Cast/Heal
+0808926C = Djinn
+0808962C = Free
+
+
+---
+0808A000 = Map Mechanics
+
+
+0808A5F8 = Exit Init
+0808A6E4 = Death… (In battle??? Hp is set to 1, and go to sanctum.)
+0808A8D0 = Get area index for room(room)
+0808A8E4 = Includes unknown room load? (Warps)
+ 0808a932 = Call 08077098 Party initialization
+0808AB48 = Decompress Map Code
+0808AB74 = Room Change Story flags Reset (Not sure if also lure cap/boost encounters effect flag , but probably.)
+0808ACC4 = Play sound at 02000430.
+0808ACE0 = Assigns Battle Encounters to regular Maps(0=no battle?)
+0808ADF0 = Assigns Battle Encounters to World Map
+0808AE74 = Random battles(encounters index,?) - Should work the same as GS2, but with one exception:
+ 0808AEE2 = GS1-exclusive - If you have Jenna, and if she has more than 130 exp, no random battles will occur.
+0808B02C = Regular maps - Random battles(encounters index slot) Arg is 0 or 1?
+0808B048 = World Map - Random battles(addr for x/y?)
+0808B05C = get_encounter_group(encounter, group)
+0808B074 = 0809D8B0 is encounter+group list. ; For djinn
+0808B090 = Room Music reference Table code
+0808B158 = Room Name reference Table code
+0808B1D8 = Update Sanctum to go to on death.
+0808B248 = Get Battle Background (16-bit at 02000416.)
+0808B25C = Assigns Battle Backgrounds to Maps
+0808B2B0 = ?(world_map_terrain_type)
+0808B320 = Assign Battle Music (Has story flag 16C check.)
+0808B398 = Returns/calculates sprite id for a pc. (pc)
+0808B3D0 = A simpler version of above, and has no flag check. (pc,off/on) (Not sure how this is used.)
+0808B3EC = Map Code Sprite stuff… sets gravity mode… 
+0808B64C = 
+0808B674 = Called when loading a room. Sets movement mode, etc.
+0808B824 = Returns number of last used NPC index + 1. ; Returns -1 if no NPC slots are available. (Occurs when you have an NPC 0x41.)
+0808B854 = GS1-exclusive? - Returns address of pointer to NPC data (npc id)
+0808B868 = Might be for overlay graphics? (Think trial roads???) (pointer)
+0808B8E8 = GS1-exclusive - 
+0808B98C = GS1-exclusive - 
+0808B9F8 = Clears NPCs list.
+0808BA1C = Get_object_ram_data(obj_ind) //obj_ind<=BF (If higher, returns 0)
+0808BA38 = 
+0808BB2C = 
+0808BC44 = 
+0808BC9C =
+
+
+0808BEC0 = Movement-based value updating; Field psynergy recovery, djinn recovery…
+
+
+0808E680 = Use Psynergy
+ 0808E8B4 = Utility Code (Interaction and non-interaction functions.) 
+
+
+08091890 = Remove character and restore remaining party members (used when Jenna gets removed in Sol Sanctum)
+
+
+08091F14 = Djinni battle? ?(obj,djinni?)
+08091F90 = onBattleWin(map,door)
+08091FA8 = onBattleLose(map,door)
+08091FC0 = warp_to(map,door)
+
+
+08096810 = Utility usage without object.
+
+
+080 - Halt (x09)
+
+
+08096960 = Utility usage on object.
+
+
+08097540 = Mind Read B (Non-interaction & Interaction)
+
+
+08097C3C = Move (Interaction)
+08097F80 = 
+0809802C = Move (Non-interaction)
+08098070 = 
+08098184 = 
+080981B0 = 
+08098294 = 
+080982DC = 
+080983A0 = Reveal (Non-interaction & Interaction)
+080984C0 = Reveal Exit (Called by Mind Read as well.)
+080985A8 = Growth (Interaction)
+080985FC = Growth (Non-interaction)
+
+
+08098848 = Lift (Interaction)
+
+
+08098954 = Lift (Non-interaction)
+
+
+08098CCC = Force (Interaction)
+
+
+08098CD8 = Force (Non-interaction)
+
+
+08099128 = Frost (Interaction)
+
+
+08099160 = Frost (Non-interaction)
+
+
+080994C0 = Ply (Interaction)
+
+
+080994D0 = Ply (Non-interaction)
+
+
+08099678 = Tilemap check (0xFB) for if you should be in Cloak while in use. (Sets 0x2092 to exit Cloak.)
+
+
+08099838 = Cloak (Non-interaction & Interaction)
+
+
+080999E4 = Douse (Interaction)
+
+
+080999F0 = Douse (Non-interaction)
+
+
+08099DA4 = Carry (Interaction)
+
+
+0809A294 = Carry (Non-interaction)
+
+
+0809A8B8 = Whirlwind (Interaction)
+
+
+0809A8C4 = Whirlwind (Non-interaction)
+
+
+0809ADE8 = Halt A (Non-interaction & Interaction)
+
+
+0809AE58 = Catch (Interaction)
+
+
+0809AE64 = Catch (Non-interaction)
+
+
+0809B208 = Retreat (Non-interaction & Interaction)
+
+
+0809B698 = Avoid (Non-interaction & Interaction)
+0809B804 = 
+
+
+0809C610 = Battle Encounters
+ 0000 = Encounter rate/frequency.
+ 0000 = Recommended level for average PC. (Higher than this (up to +5) may makes battles happen sooner.)
+ 0000 *8 = Monster Group indexes
+ 00 *8 = Which battles are more common than the others.
+
+
+0809D170 = Assigns Battle Encounters to Maps
+ 000F = Room
+ FFFF = Door
+ 8814 = Story flag Index
+ 0001 = Battle Encounters Index
+
+
+0809D7A8 = Assigns World Map Battle Encounters
+ 0001 = Area Type
+ 0004 = Terrain type
+ FFFF = Story flag Index
+ 0007 = Battle Encounters Index
+
+
+0809D8B0 = Djinn battles?
+ 0064 = Battle Encounters Index
+ 0000 = Group (Which of the eight monster groups? (0-7))
+
+
+0809D9F0 = Room Music reference Table
+ 0001 = If Door is x8000+, this is the Room number, otherwise, Area number. (Rooms w/ same name.)
+ 7FFF = Door
+ FFFF = Story flag Index
+ 004A = Song
+
+
+0809DDD8 = Room Name reference Table
+ 0000 = If Door is x8000+, this is the Room number, otherwise, Area number. (Rooms w/ same name.)
+ 7FFF = Door
+ 0000 = Room name index
+ 0000 = Unused?
+
+
+0809E1D0 = 8 bytes unused?
+
+
+0809E1D8 = Sanctums
+ 0003 = Room needed to be accessed.
+ 000F = Door needed to be accessed.
+ 0008 = Map to Sanctum Warp to.
+ 0010 = Door to Sanctum Warp to.
+Note: GS2 includes ship’s X/Y/Direction.
+
+
+0809E270 = Assigns Battle Backgrounds to Maps
+ 80000034 = Background index from Master File Table.
+ 00000003 = Map
+You can either assign another background be prefixing with 8*******, assign this background with another map as well (without the 8 flag), or end the list with 00000000.
+
+
+0809E488 = Assigns music to battles.
+ 8036 = Music?
+ 0620 = Battle?
+You can either assign another song by prefixing with 8***, assign this song with another battle as well (without the 8 flag), or end the list with 00008000(?).
+
+
+
+
+
+
+0809F1A8 = Room Table/Map Table (8 bytes per entry)
+ 036F = Map Code File Index
+ 00   = Area (When this changes, Area flags x300-x3FF reset.) (Used in room names.)
+ 01   = Type - Whether you are in a town or not?  Retreat will not work with 02. Always 01 or 02.
+ 0000 = Index to MFT indexes in 0802F380 table for Map/Palette/Tileset data.
+ 0000 = Unused? May indicate indoor/outdoor in GS2 but all maps are 0000 here.
+
+
+
+
+080B41AC = Shop Data
+080B4AB6 = Inn prices (per PC)
+
+
+---
+
+
+080B5000 = Battle Mechanics
+Arm:
+080B5138 = Decompress_Battle_Background(source, destination) Function is moved to RAM.
+Thumb:
+080B5368 = Debug-feature: Execute party setup. (GS2 returns 0 if succeeds.)
+080B5534 = Debug-related (Unknown; When Start is pressed from next function.) - (Just a return in GS2.)
+ = Debug-related: Changes Isaac’s name to “Ha hi fu he ho”, and lets you view dialogues. (GS1-exclusive.  Just a return in GS2.)
+080B56E0 = Debug-feature: When called, hold down to activate feature. L/R selects party setup. Arrow keys chooses enemy group. Press A to confirm, if you win/lose/flee the battle, you will come back to the black screen to do another selection of party setup and enemy group. Press Start to call above function.
+080B5864 = Calculate camera position. (Called via pointer.)
+080B595C = Start a battle +Text
+080B5A0C = GS2: 08118C68
+080B5AD4 = GS2: 08118D2C ; Graphics-related (x06000000 section)
+080B5B08 = GS2: 08118D60
+080B5B14 = Return (Same as GS2.)
+080B5B18 = Clear status effects at end of battle. (And misc?)
+(GS2 note: 08118E64 = GS2-exclusive)
+080B5C08 = GS2: 08118EB0
+080B5D3C = Enable first 16 summons if you have the djinn for them.
+080B5E10 = Return (Same as GS2.)
+080B5E14 = 
+080B5F0C = 
+080B606C = 
+080B60A0 = 
+080B6148 = 
+080B6378 = 
+080B63B0 = 
+080B63C8 = 
+080B6A60 = 
+080B6AE0 = 
+080B6B40 = 
+080B6C08 = 
+080B6C90 = 
+080B6CB0 = 
+080B6CD0 = 
+080B6CDC = 
+080B6D30 = 
+080B6E30 = 
+080B6E7C = 
+080B6EB4 = Get weapon sprite index(pc)
+080B6F44 = Battle Unit Sprite Scaling - Start of function
+080B7410 = 
+080B7424 = 
+080B7514 = 
+080B7548 = 
+080B75DC = 
+080B770C = 
+080B7738 = 
+080B78E4 = 
+080B7994 = 
+080B7AAC = 
+080B7B30 = 
+080B7B6C = 
+080B7DD0 = 
+080B7E04 = 
+080B7E24 = 
+080B7E60 = 
+080B7E7C = 
+080B7EB4 = 
+080B7ED8 = 
+080B7F20 = 
+080B7F70 = 
+080B7F9C = 
+080B8000 = 
+080B8064 = 
+080B80B8 = 
+080B8144 = 
+080B8178 = 
+080B81C8 = 
+080B8228 = 
+080B82C4 = 
+080B8394 = 
+080B83B4 = 
+080B8418 = 
+080B845C = 
+080B84C0 = 
+080B8530 = 
+080B8574 = 
+080B86EC = Battle Camera Rotation with L/R buttons. (Unused)
+080B874C = 
+080B8808 = 
+080B8824 = 
+080B8888 = 
+080B88D0 = 
+080B8B48 = 
+080B8C1C = 
+080B8DB8 = proto_deal_damage_test (charslot_ID, damage, crit_landed_flag, ?)
+080B8EC4 = 
+080B8F08 = 
+080B8F58 = 
+080B8FD4 = 
+080B90AC = 
+080B90F8 = Calculate chance of fleeing: Pending formula:
+Random(0,9999) >= 5000 + (2000*fleeFails) + (Relative Level * 500), Oddly uses the “General” RNG.
+Relative Level = Get the average level of all the PCs and subtract the average level of the enemies.
+080B920C = 
+080B9324 = 
+080B9470 = 
+080B9554 = 
+080B9604 = 
+080B9724 = 
+080B98B4 = 
+080B9934 = 
+080B9A44 = 
+080B9A70 = 
+080B9ACC = 
+080B9B2C = Return
+080B9B30 = 
+080B9D34 = 
+080B9DC4 = 
+080B9EC0 = 
+080BA27C = 
+080BA2C0 = 
+080BA584 = 
+080BA6AC = 
+080BA918 = 
+080BA978 = 
+080BABDC = 
+080BAC6C = 
+080BACE8 = 
+080BAD7C = 
+080BAE40 = 
+080BB588 = 
+080BB65C = 
+080BB7C0 = 
+080BB8D8 = 
+080BB8E8 = 
+080BB928 = 
+080BB938 = 
+080BBABC = 
+080BBAE8 = Arg is ability effect for x1F/x20/x3C/x45 (31/32/60/69)
+080BBB0C = Damage formula
+ 080BBECC = Formula List
+ 080BC364 = Summon damage/HP% modifiers
+ ABILITY EFFECTS CODE/ADDED EFFECTS CODE - Status effects (ability effect table/added effects table)
+ 080BC6B0 = 
+080BD3C8 = Returns True (1) for Psy Drain (PP:0); and all abilities that have a PP cost. Else, returns False (0).
+080BD3E4 = 
+080BD424 = Enemy AI
+080BD7A4 = 
+080BD7DC = 
+080BD808 = 
+080BD850 = 
+080BD898 = 
+080BDFEC = 
+080BE02C = 
+080BE070 = 
+080BE0B4 = 
+080BE18C = 
+080BE378 = Start of turn
+080BF208 = Random chance of recovering from an ailment/debuff
+080BF250 = Decrement Attack (De)Buff Turn Duration
+080BF2B4 = Decrement Defense (De)Buff Turn Duration
+080BF318 = Decrement Resistance (De)Buff Turn Duration
+080BF37C = Decrement Delusion Turn Duration
+(Sees clearly once again.)
+080BF3BC = Decrement Confuse Turn Duration
+(Regains consciousness.)
+080BF400 = Decrement Charm Turn Duration
+(Regains consciousness.)
+080BF440 = Decrement Stun Turn Duration
+080BF484 = Decrement Sleep Turn Duration
+080BF4C4 = Decrement Psy-seal Turn Duration 
+(Psynergy seal)
+080BF524 = Decrement Regenerate Turn Duration (Unlike GS2, has no dialogue.)
+080BF54C = Decrement Reflect Turn Duration
+080BF574 = Decrement Agility Buff Turn Duration
+080BF5A8 = Decrement djinn recovery turn durations (And recover them when they hit 0.) (For use after Summons.) (PC's HP must be > 0)
+080BF65C = Decrement djinn recovery turn durations 20 times. (Calls above function.))
+080BF674 = Return
+080BF678 = End of round (+ status effects)
+080BFBA4 = 
+080BFFB8 = 
+080C0098 = 
+080C00D8 = 
+080C0130 = 
+080C0184 = 
+080C01BC = 
+080C0228 = 
+080C0298 = 
+080C02A4 = 
+080C0700 = 
+080C0774 = 
+080C08A8 = 
+080C08E0 = 
+080C08EC = 
+080C0A24 = 
+080C0BE4 = 
+080C0CEC = 
+080C0DF4 = 
+080C0E38 = 
+080C0E70 = 
+080C0EA8 = 
+080C0EB8 = 
+080C0EDC = 
+080C0EEC = 
+080C0F98 = 
+080C1014 = 
+080C1054 = 
+080C1084 = 
+080C10E8 = 
+080C11EC = 
+080C1438 = 
+080C1470 = 
+080C16D0 = 
+080C1724 = 
+080C1798 = 
+080C1A14 = 
+080C1A24 = 
+080C1A34 = 
+080C1AFC = Battle Arena - Battle Group Calculation 
+080C1C54 = 
+080C1DF4 = 
+080C1EBC = 
+080C1F50 = 
+080C1FA8 = 
+080C1FFC = Initialize enemies(group id?)
+080C2368 = 
+080C2384 = 
+080C23A0 = 
+080C23C0 = 
+080C23E8 = 
+080C2410 = 
+080C2434 = 
+080C2454 = 
+080C2470 = 
+080C24B0 = 
+080C24F0 = 
+080C2724 = 
+080C2A08 = Return
+
+
+080C2A0C = Data tables
+
+
+080C2A98 = Ability Types
+
+
+080C5C38 = enemy group data (16 bytes per entry)
+    BYTE - ???
+    BYTE x 5 - enemy IDs; corresponds to data at 08080EC8 + (ID-8)*0x54
+    BYTE x 5 - minimum quantities of enemy
+    BYTE x 5 - maximum quantities of enemy
+
+
+080C7420 = Enemy Properties Table/Actor Properties Table
+
+
+080C797C~080C7980 = Free space starts here.
+
+
+080C9000 = Ability Animations
+
+
+080EE2B4 = Animation table
+
+
+080F9000 = Audio
+080F9010 = Play song (song)
+
+
+08185000 = get_sprite_address(sprite_index)
+
+
+08320000 = Master File Table
+
+
+
+
+0200046C = Lamakan Desert Gauge Cap (changing value also changes increment speed); x0258 in Lamakan, x0010 elsewhere
+0200046E = Gauge Increment Type: x0001 makes it increment on any surface without movement, while other values make it work like normal (requiring movement on the correct tiles, like sand)
+02000470 = ??? (is 0x0119 in Lamakan, and seemingly x0001 everywhere else)
+02000472 = Lamakan Desert Heat Thermometer volume
+
+
+0800EC89 = TOWN / SCENERY Movement Toggle (D0 for Default Walking / D1 for Default Running)
+ D0 - BEQ (walking speed)
+ D1 - BNE (walking speed)
+0800F325 = WORLD MAP Movement Toggle (D0 for Default Walking / D1 for Default Running)
+
+
+02000040-0200023F = Storybook Flag List/Flags
+ 021 - Set when young Isaac wears his cloak
+
+
+02000380 = Artifact Quantities (0x80 of them)
+
+
+02000438 = Party Formation
+        
+
+
+
+
+0200044C = Message Speed
+        0 = Slow
+        1 = Normal
+        2 = Fast
+
+
+
+
+02030EBC = Isaac’s Idle Script Pointer (32-bit) - (PC scripts can allow for different types of movement, including “do nothing” which cutscenes tend to use.)
+        35XX = Able to walk (if 02030F1A = 0000)
+        32XX = Cutscene / Menu States (unable to walk)
