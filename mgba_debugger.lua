@@ -89,13 +89,13 @@ require "asm"
 
         function THM.chain_branch(addr)
             addr = THM.bl_target(addr)
-            if not addr then return end
-            local chain = {}
+            if not addr then return {} end
+            local chain = {addr}
             while r32(addr) == 0x47204C00 do
                 addr = r32(addr + 4) & ~1
                 chain[#chain+1] = addr
             end
-            if #chain > 0 then return chain end
+            return chain
         end
 
         function THM.bl_target(addr)
@@ -426,15 +426,21 @@ require "asm"
         local v = value >= 0x10000 and ("%08X"):format(value) or ("%04X"):format(value)
         local info = ""
         local read_addr = m.read_check(addr)
-        if read_addr then info = (" =%08X"):format(r32(read_addr)) end
-        local chain = m.chain_branch(addr) or {}
-        for i=1,#chain do
-            info = info..(" -> $%08X"):format(chain[i])
+        if read_addr then
+            local read_value = r32(read_addr)
+            info = (" =%08X"):format(read_value)
+            if docs and GAME.docs[read_value & ~1] then
+                info = info.." // "..GAME.docs[read_value & ~1]
+            end
+        end
+        local chain = m.chain_branch(addr)
+        for i=2,#chain do
+            info = info..(" ->$ $%08X"):format(chain[i])
         end
         if docs and m.bl_check(addr) then
             local target = chain and chain[#chain] or m.bl_target(addr)
             if GAME.docs[target] then
-                info = info.." ; "..GAME.docs[target]:match("[^;\n]*")
+                info = info.." // "..GAME.docs[target]:match("[^\n]*")
             end
         end
         return ("%08X: %-8s  %s%s"):format(addr, v, dis, info)
@@ -688,7 +694,7 @@ require "asm"
         local text = dis_f(addr, nil, docs)
         addr = tonumber(text:match("%x+"),16)
         local lines = {indent..("function %08X()"):format(addr)}
-        if docs then lines[1] = lines[1].." ; "..GAME.docs[addr] end
+        if docs and GAME.docs[addr] then lines[1] = lines[1].." // "..GAME.docs[addr] end
         for line in text:gmatch("[^\n]+") do
             lines[#lines+1] = "    "..indent..line
         end
@@ -696,7 +702,7 @@ require "asm"
         return table.concat(lines, "\n")
     end
 
-    function farmips(addr, m, relative, indent) -- format a function to assemble with ARMIPS
+    function farmips(addr, docs, relative, indent) -- format a function to assemble with ARMIPS
         addr = addr or emu:readRegister("pc")
         m = m or guess_mode(addr)
         indent = indent or 0
@@ -713,13 +719,25 @@ require "asm"
             local disasm_text = modes[m].dis(a)
             disasm_text = disasm_text:gsub("%$","0x")
             local bl_match = disasm_text:match("bl 0x(%x*)")
-            if bl_match and relative then
-                local n = tonumber(bl_match,16)
-                if not bl_found[n] then
-                    bl_found[n] = true
-                    bl_list[#bl_list+1] = n
+            if bl_match then
+                if relative then
+                    local n = tonumber(bl_match,16)
+                    if not bl_found[n] then
+                        bl_found[n] = true
+                        bl_list[#bl_list+1] = n
+                    end
+                    disasm_text = "bl @@_"..bl_match
                 end
-                disasm_text = "bl @@_"..bl_match
+                if docs then
+                    local chain = modes[m].chain_branch(a)
+                    if #chain > 1 then disasm_text = disasm_text.." //" end
+                    for i=2,#chain do
+                        disasm_text = disasm_text..(" -> $%08X"):format(chain[i])
+                    end
+                    if GAME.docs[chain[#chain]] then
+                        disasm_text = disasm_text.." // "..GAME.docs[chain[#chain]]
+                    end
+                end
             end
             local b,des = disasm_text:match("^(b%a?%a?) 0x(%x*)")
             if des and not disasm_text:match("blx?h? ") then
@@ -733,7 +751,11 @@ require "asm"
             end
             local read_addr = modes[m].read_check(a)
             if read_addr then
-                disasm_text = disasm_text:gsub("%[0x%x*%]",("=0x%08X"):format(r32(read_addr)))
+                local read_value = r32(read_addr)
+                disasm_text = disasm_text:gsub("%[0x%x*%]",("=0x%08X"):format(read_value))
+                if docs and GAME.docs[read_value & ~1] then
+                    disasm_text = disasm_text.." // "..GAME.docs[read_value & ~1]
+                end
             end
             addresses[#addresses].text = disasm_text
             local branch = modes[m].branch_check(a)
@@ -752,6 +774,9 @@ require "asm"
         end
         local branch_id_to_label_id = sort_and_get_index_map(branches)
         local lines = {("    "):rep(indent)..("_%08X:"):format(addr)}
+        if docs and GAME.docs[addr] then
+            lines[1] = lines[1].." // "..GAME.docs[addr]
+        end
         for i,addr_info in ipairs(addresses) do
             local spaces = ("    "):rep(addr_info.indent)
             if addr_info.label then
@@ -769,6 +794,9 @@ require "asm"
             lines[#lines+1] = ""
             for i,f in ipairs(bl_list) do
                 lines[#lines+1] = ("@@_%08X:"):format(f)
+                if docs and GAME.docs[f] then
+                    lines[#lines] = lines[#lines].." // "..GAME.docs[f]
+                end
                 lines[#lines+1] = ("    ldr r4, =0x%08X"):format(f+1)
                 lines[#lines+1] = ("    bx r4")
                 lines[#lines+1] = ("    .pool")
@@ -797,6 +825,7 @@ require "asm"
 --
 
 -- main loop
+    GAME:update()
 
     for _,f in ipairs{"hex", "dis", "dis_f", "mem", "fprint", "farmips"} do
         _G[f] = print_decorator(_G[f])
