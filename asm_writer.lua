@@ -209,7 +209,8 @@ while true do
     if inputs["control"] then
         local i = category_box.inputbox
         if i.hover then i.selected = i.selected or 1 end
-        if i.clicked and inputs.keys["control"] then       
+        if i.clicked and inputs.keys["control"] then
+            i.clicks.count = 3
             local line = i.lines[i.cursor[2]]
             if template_map[line] then
                 b_box.text = OPS[template_map[line]][1]:gsub("[^01]","0")
