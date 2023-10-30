@@ -557,7 +557,7 @@ Thumb:
 080220F0 = Field sprite properties stuff? Deals with shadows and sprite rotation for sure
  08022196 = Sprite size check?
  080221BA = Check object shadow flag
-08022318 = called by 08105CC (digit missing?)
+08022318 = update_sprite_graphic(*sprite_info, pntr?, pntr?, direction, sprite_slot)
 
 
 0802254C = Battle Settings Stuff (including sprite scaling possibly) (,current coords pointer,scaling pointer,direction,)
@@ -4517,7 +4517,7 @@ Weather graphics
 080F80A8 = Clear flags 152 and 166 
 080F80C4 = Set flags 152 and 166
 080F80E0
-080F811C = create_panel(pntr, x, y, width, height, ?) Return ? (Note: May do some unknown things? It has a call to 08038010.)
+080F811C = create_panel(pnl_pntr, x, y, width, height, ?) writes to pnl_pntr (Note: May do some unknown things?)
 080F815C = delete_panel(pnl_pntr_addr, unknown flag) //Like clear_panel, but also removes the pointer to its data.
 080F8170 = Character Mini-Status panel(RAM pointer???, target_ID, 0?, panel_type)
  080F8220 = Poison (Status Ailment)
@@ -4554,7 +4554,7 @@ Weather graphics
 080F8888 = display_icon(addr) - convert to OAM format(resource addr) (Affectively updates icon placement on screen.)
  - X, Y, no flips/no rot/no scaling/no double size
 080F88C4 = loads and/or displays portrait(unused, spriteID)
-080F88D0 = display_panel_scrolling_arrows
+080F88D0 = create_party_panel
 080F89A4
 080F8A44 = Hand cursor animation
 080F8AB4
@@ -4952,8 +4952,8 @@ the exact same thing); alternate text scripts based on demo flag
 08104D5C
 08104DA8 = Display icons in Item menu (may include other menus)?
 08104E38
-08104EF8
-08104FE0
+08104EF8 = initialize_party_sprites(r0)
+08104FE0 = add_party_sprites_to_panel(panel_pntr, tile_x, tile_y)
 0810508C
 081050B8
 081050CC = Calls 08022318
@@ -8341,7 +8341,7 @@ RAM Map
 02000000-02002FEF is saved to Save Game.
 02000000 = Used in saving.
  02000000 = Name
- 0200000C - Level
+ 0200000C = Level
  02000010 = Frame Counter/Time Played 
  02000014 = Coins
  02000018 = Djinn amounts
